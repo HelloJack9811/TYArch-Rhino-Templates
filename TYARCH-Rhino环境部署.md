@@ -9,7 +9,8 @@
 | 仓库地址 | <https://github.com/HelloJack9811/TYArch-Rhino-Templates> |
 | 适用 Rhino | Rhino 8（Windows） |
 | 部署内容 | 模板 `.3dm` ×1、显示模式 `.ini` ×5 |
-| 前置条件 | Rhino 8 已安装；harness 通道可用（见「前置：打通 harness 通道」） |
+| 前置条件 | Rhino 8 与 AI harness（含 RhinoMCP 通道）已预先配置。本文档不覆盖这两项的安装。 |
+| 假设 | 本仓库为私有仓库，操作者已拥有访问权限（见「前置一：取得仓库」） |
 
 ---
 
@@ -56,7 +57,20 @@ Rhino.Display.DisplayModeDescription.ImportFromFile(filename, interactive) -> Gu
 
 ## 3. 部署步骤（AI harness）
 
-### 前置：打通 harness 通道
+### 前置一：取得仓库
+
+新机器上还没有这个仓库，而本文档在仓库里——所以第一份信息必须从仓库外传来。发给新同事（或直接发给他的 AI 助手）的最小信息是两行：
+
+```
+仓库：https://github.com/HelloJack9811/TYArch-Rhino-Templates
+命令：git clone https://github.com/HelloJack9811/TYArch-Rhino-Templates
+```
+
+前提是该 GitHub 账号已被加为本仓库的**协作者**。仓库是私有的，未获授权的账号访问会直接得到 404，而不是权限提示。
+
+首次 clone 时浏览器登录一次，凭据由 Git Credential Manager 保存；之后无论人还是 AI 都不需要重复登录。clone 出来的本地目录就是下面脚本里的 `<仓库路径>`。
+
+### 前置二：打通 harness 通道
 
 Rhino 需处于运行状态，并在 Rhino 中执行命令 `mcpstart`，桥接开始监听 `127.0.0.1:1999`。之后 harness 即可通过 `execute_rhinoscript_python_code` 在 Rhino 内执行下面的脚本。
 
@@ -150,6 +164,7 @@ for m in Rhino.Display.DisplayModeDescription.GetDisplayModes():
 - **`.ini` 是 UTF-16 LE + CRLF**：如需编辑，另存时保持原编码与换行；存成 UTF-8 可能导致导入失败。
 - **设置回写时机**：显示模式在 Rhino 运行时注册；默认模板设置即时生效，但设置文件在 Rhino 退出时才写回。部署完成后建议正常退出 Rhino 再重开一次。
 - **部署范围仅限团队共用项**：仓库只收录团队共用的 5 个显示模式。维护机上可能另有个人定制模式（例如快速预览之类），属于个人环境，不纳入对外部署，也不必补齐。
+- **版本更新**：模板或显示模式更新后，在本地仓库目录执行 `git pull`，再重跑第 3 节的脚本即可（模板文件会被直接覆盖；显示模式的重复导入行为见下条）。
 - **尚未实测**：`ImportFromFile` 的实际导入结果、以及重复导入同一 `.ini` 时是覆盖还是新增，本文档编写时未做实测（在已装好该环境的机器上执行会污染现有配置）。首次在全新机器上部署时请留意第 5 步的验证输出，并把结果回填到本节。
 
 ---
