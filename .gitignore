@@ -1,0 +1,17 @@
+# Rhino 工作文件与临时产物
+*.3dmbak
+*.3dm.rhl
+*.rhl
+*.rws
+*.rhl.bak
+*.autosave
+
+# 系统
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
